@@ -83,20 +83,3 @@ def numpy_to_vtk(data, output_file):
     writer.SetFileName(f"{output_file}.vti")
     writer.SetInputData(img)
     writer.Write()
-
-
-def sub_cube_to_vtk(data, out_filename):
-    grid = pv.ImageData()
-
-    # Set the grid dimensions
-    grid.dimensions = np.array(data.shape) + 1
-
-    # Edit the origin and spacing of the grid
-    grid.origin = (0, 0, 0)  # The bottom left corner of the data set
-    grid.spacing = (1, 1, 1)  # These are the cell sizes along each axis
-
-    # Add the NumPy array as the grid's cell data
-    grid.cell_data["values"] = data.flatten(order="F")  # Flatten the array
-
-    # Save the grid to a VTK file
-    grid.save(f"{out_filename}.vtk")
