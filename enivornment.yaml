@@ -1,0 +1,10 @@
+name: simulation-data_format
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - h5py
+  - numpy
+  - pip
+  - pip:
+      - pyvista
