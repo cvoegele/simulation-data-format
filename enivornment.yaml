@@ -5,6 +5,4 @@ dependencies:
   - python
   - h5py
   - numpy
-  - pip
-  - pip:
-      - pyvista
+  - vtk

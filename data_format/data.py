@@ -2,7 +2,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 import h5py
 import numpy as np
-import pyvista as pv
 import vtk
 import vtkmodules.util.numpy_support as numpy_support
 
@@ -67,11 +66,11 @@ def write_sub_cube_to_file(filename: str, cube_to_replace: np.array, start_x, st
         dataset[start_x:(start_x + x_size), start_y:(start_y + y_size), start_z:(start_z + z_size), :] = cube_to_replace
 
 
-def numpy_to_vtk(data, output_file):
+def numpy_to_vtk(data, output_file, index_of_number_to_take=5):
     data_type = vtk.VTK_FLOAT
     shape = data.shape
 
-    flat_data_array = data[:, :, :, 5].flatten()
+    flat_data_array = data[:, :, :, index_of_number_to_take].flatten()
     vtk_data = numpy_support.numpy_to_vtk(num_array=flat_data_array, deep=True, array_type=data_type)
 
     img = vtk.vtkImageData()
@@ -83,3 +82,23 @@ def numpy_to_vtk(data, output_file):
     writer.SetFileName(f"{output_file}.vti")
     writer.SetInputData(img)
     writer.Write()
+
+
+def interpolate_cube_along_x(cube: np.array, step_size=1):
+    copy = cube.copy()
+    shape = cube.shape
+    x_size = shape[0]
+    y_size = shape[1]
+    z_size = shape[2]
+    for x in range(0, x_size):
+        x1 = x + step_size
+        while x1 >= x_size:
+            x1 = x1 - 1
+
+        for y in range(0, y_size):
+            for z in range(0, z_size):
+                value0 = cube[x, y, z]
+                value1 = cube[x1, y, z]
+                copy[x, y, z] = value0 * 0.5 + value1 * 0.5
+
+    return copy
